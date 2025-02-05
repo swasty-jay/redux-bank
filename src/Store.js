@@ -1,12 +1,18 @@
-import { createStore } from "redux";
+import { combineReducers, createStore } from "redux";
 
-const InitialState = {
+const InitialStateAccount = {
   balance: 0,
   loan: 0,
   loanPurpose: "",
 };
 
-const reducer = (state = InitialState, action) => {
+const InitialStateCustomer = {
+  FullName: "",
+  NationalID: "",
+  CreatedAt: "",
+};
+
+const AccountReducer = (state = InitialStateAccount, action) => {
   switch (action.type) {
     case "account/deposit":
       return { ...state, balance: state.balance + action.payload };
@@ -35,7 +41,29 @@ const reducer = (state = InitialState, action) => {
   }
 };
 
-const store = createStore(reducer);
+function CustomerReducer(state = InitialStateCustomer, action) {
+  switch (action.type) {
+    case "customer/CreateCustomer":
+      return {
+        FullName: action.payload.FullName,
+        NationalID: action.payload.NationalID,
+        CreatedAt: action.payload.CreatedAt,
+      };
+    case "customer/UpdateName":
+      return {
+        FullName: action.payload,
+      };
+
+    default:
+      return state;
+  }
+}
+const rootReducer = combineReducers({
+  account: AccountReducer,
+  Customer: CustomerReducer,
+});
+
+const store = createStore(rootReducer);
 // store.dispatch({ type: "account/deposit", payload: 100 });
 // console.log(store.getState());
 
@@ -70,4 +98,33 @@ function payLoan() {
   return { type: "account/payLoan" };
 }
 store.dispatch(Deposit(100));
+console.log(store.getState());
+
+store.dispatch(withdraw(50));
+console.log(store.getState());
+
+store.dispatch(requestLoan(200, "buy a car"));
+console.log(store.getState());
+
+store.dispatch(payLoan());
+console.log(store.getState());
+
+function CreateCustomer(FullName, NationalID) {
+  return {
+    type: "customer/CreateCustomer",
+    payload: { FullName, NationalID, CreatedAt: new Date().toISOString() },
+  };
+}
+
+function UpdateName(FullName) {
+  return {
+    type: "account/UpdateName",
+    payload: FullName,
+  };
+}
+
+store.dispatch(CreateCustomer("Daniel yawson", "1234"));
+console.log(store.getState());
+
+store.dispatch(UpdateName("dani yaw"));
 console.log(store.getState());
