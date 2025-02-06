@@ -15,7 +15,7 @@ function AccountOperations() {
     loan: currentLoan,
     loanPurpose: currentLoanPurpose,
     balance,
-  } = useSelector((store) => store.Account);
+  } = useSelector((store) => store.account);
 
   console.log(balance);
   function handleDeposit() {
