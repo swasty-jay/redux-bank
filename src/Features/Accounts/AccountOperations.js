@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Deposit, withdraw, requestLoan, payLoan } from "./AccountSlice";
+import Spinner from "../../Spinner";
 
 function AccountOperations() {
   const [depositAmount, setDepositAmount] = useState("");
@@ -15,6 +16,7 @@ function AccountOperations() {
     loan: currentLoan,
     loanPurpose: currentLoanPurpose,
     balance,
+    isLoading,
   } = useSelector((store) => store.account);
 
   console.log(balance);
@@ -22,6 +24,7 @@ function AccountOperations() {
     if (!depositAmount || !currency) return;
     dispatch(Deposit(depositAmount, currency));
     setDepositAmount("");
+    setCurrency("");
   }
 
   function handleWithdrawal() {
@@ -63,7 +66,9 @@ function AccountOperations() {
             <option value="GBP">British Pound</option>
           </select>
 
-          <button onClick={handleDeposit}>Deposit {depositAmount}</button>
+          <button onClick={handleDeposit} disabled={isLoading}>
+            {isLoading ? <Spinner /> : `Deposit ${depositAmount}`}
+          </button>
         </div>
 
         <div>
